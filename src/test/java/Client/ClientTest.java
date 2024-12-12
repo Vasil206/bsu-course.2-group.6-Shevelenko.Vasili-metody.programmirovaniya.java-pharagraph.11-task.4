@@ -33,11 +33,12 @@ public class ClientTest extends Client {
     }
 
     @Override
-    public void stop() {
+    public void speak(long milliseconds) {
+
+        super.speak(milliseconds);
         
         stopCallingStack.add(name);
         allClientsHaveSpoken.countDown();
-        super.stop();
     }
 
 

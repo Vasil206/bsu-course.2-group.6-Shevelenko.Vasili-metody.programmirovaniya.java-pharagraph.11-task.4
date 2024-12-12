@@ -27,8 +27,6 @@ public class CallCenterTest {
 
             var client = new ClientTest(i);
             clients.add(client);
-
-            new Thread(client, Integer.toString(i)).start();
         }
 
 

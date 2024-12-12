@@ -3,9 +3,8 @@ package Client;
 
 import java.util.concurrent.Semaphore;
 
-public class Client implements Runnable {
+public class Client {
 
-    private Boolean canceletionTocken = false;
     private Thread calling;
     
     public Client(){
@@ -42,27 +41,7 @@ public class Client implements Runnable {
             e.printStackTrace();
         }
     }
-
-
-    public void stop(){
-        canceletionTocken = true;
-    }
     
-    @Override
-    public void run(){
-        
-        try{
-
-            while(!canceletionTocken){
-                
-                //work load, while waiting
-            }
-        } catch (Exception ex) {
-
-            ex.printStackTrace();
-        }
-    }
-
 
     protected class Calling implements Runnable {
 
@@ -87,7 +66,6 @@ public class Client implements Runnable {
                 callCenter.acquire();
 
                 client.speak(3000);
-                client.stop();
                 callCenter.release();
             } catch (InterruptedException e) {
                 
