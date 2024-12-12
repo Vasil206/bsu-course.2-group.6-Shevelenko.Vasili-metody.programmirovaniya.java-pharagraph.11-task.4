@@ -1,47 +1,100 @@
 
 package Client;
 
-import java.util.Random;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class Client implements Runnable {
 
-    private final Semaphore callCenter;
+    private Boolean canceletionTocken = false;
+    private Thread calling;
     
-    public Client(Semaphore callCenter){
+    public Client(){
+    }
 
-        this.callCenter = callCenter;
+    public void callUp(Semaphore callCenter){
+
+        if(callCenter == null){
+
+            throw new IllegalArgumentException("client cannot call to nothing");
+        }
+
+        var callingInner = new Calling(this, callCenter);
+
+        calling = new Thread(callingInner);
+        calling.start();
+    }
+
+    public void callDown(){
+
+        if(calling != null){
+
+            calling.interrupt();
+            calling = null;
+        }
+    }
+
+    public void speak(long milliseconds){
+
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            
+            e.printStackTrace();
+        }
+    }
+
+
+    public void stop(){
+        canceletionTocken = true;
     }
     
     @Override
     public void run(){
         
-        var rand = new Random();
-        boolean isGetCalling;
+        try{
 
-        System.out.println(super.getName() + " is waiting...");                         //ERROR
-
-        try { 
-            isGetCalling = callCenter.tryAcquire(rand.nextInt(5), TimeUnit.SECONDS);
-            
-            if (isGetCalling){
+            while(!canceletionTocken){
                 
-                System.out.println(super.getName() + " is speaking...");                //ERROR
-            
-                Thread.currentThread().sleep(rand.nextInt(5000));
-                
-                callCenter.release();
+                //work load, while waiting
             }
-            
-            System.out.println(super.getName() + " called down.");                      //ERROR
-            
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+
+            ex.printStackTrace();
         }
+    }
+
+
+    protected class Calling implements Runnable {
+
+        private Semaphore callCenter;
+        private Client client;
+
+        public Calling(Client client, Semaphore callCenter){
+
+            if(client == null || callCenter == null){
+
+                throw new IllegalArgumentException("bad arguments in calling");
+            }
+
+            this.client = client;
+            this.callCenter = callCenter;
+        }
+
+        @Override
+        public void run() {
+            
+            try {
+                callCenter.acquire();
+
+                client.speak(3000);
+                client.stop();
+                callCenter.release();
+            } catch (InterruptedException e) {
+                
+            }
+        }
+    
+        
     }
 
 }
