@@ -19,7 +19,7 @@ public class ClientTest extends Client {
     }
 
     @Override
-    public void callUp(Semaphore callCenter) {
+    public void callUp(Semaphore callCenter) throws IllegalArgumentException, Exception {
 
         startCallingStack.add(name);
         super.callUp(callCenter);

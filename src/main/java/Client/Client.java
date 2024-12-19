@@ -8,19 +8,28 @@ public class Client {
     private Thread calling;
     
     public Client(){
+        calling = null;
     }
 
-    public void callUp(Semaphore callCenter){
+    public void callUp(Semaphore callCenter) throws IllegalArgumentException, Exception{
 
         if(callCenter == null){
 
             throw new IllegalArgumentException("client cannot call to nothing");
+        } else if (calling != null){
+
+            throw new Exception("client cannot calling several at the same time");
         }
 
         var callingInner = new Calling(this, callCenter);
 
         calling = new Thread(callingInner);
         calling.start();
+    }
+
+    public boolean isCalling(){
+        
+        return calling != null;
     }
 
     public void callDown(){

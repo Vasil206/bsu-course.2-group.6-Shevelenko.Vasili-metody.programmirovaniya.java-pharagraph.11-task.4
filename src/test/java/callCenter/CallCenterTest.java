@@ -29,49 +29,53 @@ public class CallCenterTest {
             clients.add(client);
         }
 
+        try{
+            //all clients are calling
+            clients.get(1).callUp(callCenter);
+            startStack.add(1);
 
-        //all clients are calling
-        clients.get(1).callUp(callCenter);
-        startStack.add(1);
+            Thread.sleep(1000);
+            clients.get(2).callUp(callCenter);
+            startStack.add(2);
 
-        Thread.sleep(1000);
-        clients.get(2).callUp(callCenter);
-        startStack.add(2);
+            Thread.sleep(10);
+            clients.get(4).callUp(callCenter);
+            startStack.add(4);
 
-        Thread.sleep(10);
-        clients.get(4).callUp(callCenter);
-        startStack.add(4);
+            Thread.sleep(10);
+            clients.get(0).callUp(callCenter);
+            startStack.add(0);
 
-        Thread.sleep(10);
-        clients.get(0).callUp(callCenter);
-        startStack.add(0);
+            Thread.sleep(10);
+            clients.get(3).callUp(callCenter);
+            startStack.add(3);
 
-        Thread.sleep(10);
-        clients.get(3).callUp(callCenter);
-        startStack.add(3);
-
-        //order of client's ending speaking, client 0 called down
-        stopStack.add(1);
-        stopStack.add(0);
-        stopStack.add(2);
-        stopStack.add(4);
-        stopStack.add(3);
-
-
-        //client number 0 cannot wait
-        Thread.sleep(2000);
-        clients.get(0).callDown();
+            //order of client's ending speaking, client 0 called down
+            stopStack.add(1);
+            stopStack.add(0);
+            stopStack.add(2);
+            stopStack.add(4);
+            stopStack.add(3);
 
 
-        //client number 0 calls again
-        Thread.sleep(2300);
-        clients.get(0).callUp(callCenter);
-        startStack.add(0);
+            //client number 0 cannot wait
+            Thread.sleep(2000);
+            clients.get(0).callDown();
 
-        //client 0 ending the speaking
-        stopStack.add(0);
 
-        ClientTest.allClientsHaveSpoken.await();
+            //client number 0 calls again
+            Thread.sleep(2300);
+            clients.get(0).callUp(callCenter);
+            startStack.add(0);
+
+            //client 0 ending the speaking
+            stopStack.add(0);
+
+            ClientTest.allClientsHaveSpoken.await();
+        } catch(Exception ex) {
+
+            ex.printStackTrace();
+        }
         
         assertThat(ClientTest.startCallingStack).isEqualTo(startStack);
         assertThat(ClientTest.stopCallingStack).isEqualTo(stopStack);
